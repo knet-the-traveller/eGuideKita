@@ -65,8 +65,35 @@ export default function Login() {
 
   return (
     <main className="mobile-container flex-center">
-      <div className="glass-card text-center fade-in">
-        <h1 className="title mb-2">🚆 eGuide</h1>
+      <div className="glass-card text-center fade-in" style={{ maxWidth: '380px', width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px' }}>
+          <video 
+            src="/e.G_gif.mp4" 
+            autoPlay 
+            loop 
+            muted 
+            playsInline 
+            style={{ 
+              width: '80px', 
+              height: '80px', 
+              borderRadius: '50%', 
+              objectFit: 'cover',
+              border: '2px solid var(--border-color)',
+              boxShadow: '0 8px 16px rgba(0,0,0,0.15)'
+            }} 
+          />
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
+          <img 
+            src="/logo.png" 
+            alt="eGuide Logo" 
+            style={{ 
+              height: '32px', 
+              objectFit: 'contain',
+              filter: 'drop-shadow(1px 0 0 white) drop-shadow(-1px 0 0 white) drop-shadow(0 1px 0 white) drop-shadow(0 -1px 0 white)'
+            }} 
+          />
+        </div>
         <p className="subtitle mb-6">Metro Manila Commuter Assistant</p>
         
         <div style={{ textAlign: 'left', marginBottom: '24px' }}>

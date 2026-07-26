@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 const MapComponent = dynamic(() => import('./MapComponent'), {
   ssr: false,
   loading: () => (
-    <div style={{ width: '100%', height: '100%', background: '#1e293b', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ width: '100%', height: '100%', background: 'var(--bg-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <p className="text-muted">Loading map...</p>
     </div>
   )
@@ -13,13 +13,15 @@ const MapComponent = dynamic(() => import('./MapComponent'), {
 
 export default function Map() {
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <h2 className="title mb-2">Live Map</h2>
-      <p className="text-sm text-muted mb-4">Powered by Project LIGTAS Data</p>
-      
-      <div className="glass-card" style={{ flex: 1, padding: 0, position: 'relative', overflow: 'hidden' }}>
-        <MapComponent />
-      </div>
+    <div style={{ 
+      position: 'absolute', 
+      top: 0, 
+      left: 0, 
+      right: 0, 
+      bottom: 0, 
+      zIndex: 0 
+    }}>
+      <MapComponent />
     </div>
   );
 }
