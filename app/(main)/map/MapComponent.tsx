@@ -310,7 +310,7 @@ export default function MapComponent() {
       const newVehicles: VehicleState[] = [];
 
       transitLines.forEach(line => {
-        if (line.id === 'pnr-nscr') return;
+        if (line.isUnderConstruction) return;
         
         const config = LINE_CONFIGS[line.id];
         if (!config) return;
@@ -703,7 +703,7 @@ export default function MapComponent() {
           };
 
           transitLines.forEach(line => {
-             if (line.id === 'pnr-nscr') return;
+             if (line.isUnderConstruction) return;
              line.stations.forEach((station, idx) => {
                 const d = distSq(lat, lng, station.coords[0], station.coords[1]);
                 if (d < closestDist) {
@@ -763,7 +763,7 @@ export default function MapComponent() {
               onChange={e => setLineViewConfig(c => ({...c, lineId: e.target.value, originStationIdx: 0}))}
               style={{ width: '100%', padding: '12px', background: '#1e293b', color: 'white', border: '1px solid #334155', borderRadius: '6px', fontSize: '14px', outline: 'none' }}
             >
-              {transitLines.filter(l => l.id !== 'pnr-nscr').map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
+              {transitLines.filter(l => !l.isUnderConstruction).map(l => <option key={l.id} value={l.id}>{l.name}</option>)}
             </select>
           </div>
 
@@ -1348,8 +1348,8 @@ export default function MapComponent() {
       )}
 
       <MapContainer 
-        center={position} 
-        zoom={12} 
+        center={[14.6500, 121.0300]} 
+        zoom={11} 
         scrollWheelZoom={true} 
         style={{ width: '100%', height: '100%', background: '#1e293b' }}
       >
@@ -1366,8 +1366,8 @@ export default function MapComponent() {
 
           const lineColor = isFaded ? '#4A5568' : line.color;
           const lineWeight = isFaded ? 3 : 5;
-          const lineOpacity = isFaded ? 0.35 : (line.id === 'pnr' ? 0.5 : 1.0);
-          const markerOpacity = isFaded ? 0.3 : (line.id === 'pnr' ? 0.6 : 1.0);
+          const lineOpacity = isFaded ? 0.35 : (line.isUnderConstruction ? 0.5 : 1.0);
+          const markerOpacity = isFaded ? 0.3 : (line.isUnderConstruction ? 0.6 : 1.0);
 
           return (
             <React.Fragment key={line.id}>
@@ -1392,7 +1392,7 @@ export default function MapComponent() {
                       color: lineColor, 
                       weight: lineWeight,
                       opacity: lineOpacity,
-                      dashArray: (segment.isDashed || line.id === 'pnr') ? '6, 8' : undefined
+                      dashArray: (segment.isDashed || line.isUnderConstruction) ? '6, 8' : undefined
                     }}
                   />
                 ))
@@ -1403,7 +1403,7 @@ export default function MapComponent() {
                     color: lineColor, 
                     weight: lineWeight,
                     opacity: lineOpacity,
-                    dashArray: line.id === 'pnr' ? '6, 8' : undefined
+                    dashArray: line.isUnderConstruction ? '6, 8' : undefined
                   }}
                 />
               )}
@@ -1461,11 +1461,13 @@ export default function MapComponent() {
                       </div>
 
                       {/* Status / Arrivals */}
-                      {line.id === 'pnr-nscr' ? (
+                      {line.isUnderConstruction ? (
                         <div style={{ marginBottom: '16px', padding: '8px', backgroundColor: '#431407', borderRadius: '6px', textAlign: 'center', border: '1px solid #7c2d12' }}>
-                          <span style={{ color: '#fdba74', fontWeight: 'bold', fontSize: '13px' }}>Suspended / Under Renovation</span>
+                          <span style={{ color: '#fdba74', fontWeight: 'bold', fontSize: '13px' }}>Under Construction</span>
                           <p style={{ margin: '6px 0 0', fontSize: '11px', color: '#fed7aa', lineHeight: '1.4' }}>
-                            Operations suspended due to North-South Commuter Railway (NSCR) construction.
+                            {line.id === 'pnr-nscr' 
+                              ? 'Operations suspended due to North-South Commuter Railway (NSCR) construction.'
+                              : 'Operations for this line are pending construction completion.'}
                           </p>
                         </div>
                       ) : isSystemActive() ? (() => {
@@ -1512,7 +1514,7 @@ export default function MapComponent() {
                       )}
 
                       {/* Action Buttons */}
-                      {line.id !== 'pnr-nscr' && isSystemActive() && (() => {
+                      {!line.isUnderConstruction && isSystemActive() && (() => {
                         let isLineActive = true;
                         const hours = getSimulatedTime().getHours();
                         const minutes = getSimulatedTime().getMinutes();
